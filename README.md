@@ -1,2 +1,2 @@
 # MediCare-Rx
-Project asignment for Programming
+Project assignment for Programming
