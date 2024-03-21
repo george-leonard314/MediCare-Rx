@@ -1,0 +1,47 @@
+# student-api.yml
+openapi: 3.0.0
+info:
+  title: "-"
+  description: "API for manging orders"
+  version: "1.0.0"
+
+servers:
+  - url: "/api"
+
+components:
+  schemas:
+    Customer:
+      type: "object"
+      required:
+        - last_name
+        - first_name
+      properties:
+        client_id:
+          type: "integer"
+        first_name:
+          type: "string"
+        last_name:
+          type: "string"
+        email:
+          type: "string"
+        phone:
+          type: "string"
+        address:
+          type: "string"
+  parameters:
+    last_name:
+      name: "last_name"
+      description: "Last name of the customer to get."
+      in: path
+      required: True
+      schema: 
+        type: "string"
+    client_id:
+      name: "client_id"
+      description: "Unique identifier for customer"
+      in: path
+      required: True
+      schema:
+        type: "integer"
+
+
