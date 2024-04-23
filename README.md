@@ -1,9 +1,6 @@
-# MediCare-Rx
+### MediCare-Rx
 Project assignment for Programming
 
-Before you can use the these apps, make sure you have the requirements installed:  
-Windows: `py -m pip install -r requirements.txt`  
-Linux: `python3 -m pip install -r requirements.txt`
 
 1. Unzip the .ZIP-archive to an empty directory
 2. Go to the directory on the commandline (`cd <dir-name>`)
@@ -12,7 +9,7 @@ Linux: `python3 -m pip install -r requirements.txt`
    Linux: `python3 -m venv .venv`
 4. Activate the VEnv:  
    Windows: `.\.venv\Scripts\activate`  
-   Linux: `./.venv/Scripts/activate`
+   Linux: `source ./.venv/bin/activate`
 5. Install requirements in the VEnv:  
    Windows: `py -m pip install -r requirements.txt`  
    Linux: `python3 -m pip install -r requirements.txt`

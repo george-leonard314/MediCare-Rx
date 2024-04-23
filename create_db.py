@@ -4,6 +4,9 @@ import sys
 from config import CONFIG
 
 class ExampleDB:
+
+    #! define class ExampleDB
+    
     @staticmethod
     def initialize(database_connection: sqlite3.Connection):
         cursor = database_connection.cursor()
@@ -29,6 +32,8 @@ class ExampleDB:
         cursor.executemany(ExampleDB.INSERT_ORDER, ExampleDB.sample_orders)
         cursor.executemany(ExampleDB.INSERT_STOCK, ExampleDB.sample_stock)
         database_connection.commit()
+
+    #! Creating the tables
 
     CREATE_TABLE_STAFF = """
     CREATE TABLE IF NOT EXISTS staff (
@@ -85,6 +90,7 @@ class ExampleDB:
     )
     """
 
+    #! Initialize the samples
 
     INSERT_STAFF = "INSERT INTO staff VALUES (?, ?, ?, ?, ?, ?, ?)"
     INSERT_CUSTOMER = "INSERT INTO customers VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
@@ -113,7 +119,9 @@ class ExampleDB:
     ]
 
 def main():
-    """Execute main function."""
+
+    #! Execute main function
+
     db_conn = sqlite3.connect(CONFIG["database"]["name"])
     db_conn.row_factory = sqlite3.Row
 
@@ -124,6 +132,7 @@ def main():
 
     return 0
 
-# --- Program entry ---
+    #! Program entry
+
 if __name__ == "__main__":
     sys.exit( main() )

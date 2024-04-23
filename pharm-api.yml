@@ -1,8 +1,9 @@
-# student-api.yml
+#! Pharmacy API
+
 openapi: 3.0.0
 info:
-  title: "-"
-  description: "API for manging orders"
+  title: "MediCare-Rx"
+  description: "API for managing orders, and employees"
   version: "1.0.0"
 
 servers:
@@ -10,38 +11,84 @@ servers:
 
 components:
   schemas:
-    Customer:
+    Stock:
       type: "object"
       required:
-        - last_name
-        - first_name
+        - med_name
       properties:
-        client_id:
+        med_id:
           type: "integer"
-        first_name:
+        med_name:
           type: "string"
-        last_name:
+        med_quantity:
+          type: "integer"
+        med_price:
+          type: "integer"
+        med_description:
           type: "string"
-        email:
-          type: "string"
-        phone:
-          type: "string"
-        address:
-          type: "string"
-  parameters:
-    last_name:
-      name: "last_name"
-      description: "Last name of the customer to get."
-      in: path
-      required: True
-      schema: 
-        type: "string"
-    client_id:
-      name: "client_id"
-      description: "Unique identifier for customer"
-      in: path
-      required: True
-      schema:
-        type: "integer"
 
-
+paths:
+  /stock:
+    get:
+      operationId: "stock.read_all"
+      tags:
+        - "Medicine"
+      summary: "Read the list of stock available"
+      responses:
+        "200":
+          description: "Succesfully read the available stock"
+    post:
+      operationId: "stock.add"
+      tags:
+        - "Medicine"
+      summary: "Add stock"
+      requestBody:
+        description: "Stock to add"
+        required: true
+        content:
+          application/json:
+            schema:
+              x-body-name: "med"
+              $ref: "#/components/schemas/Medicine"
+      responses:
+        "201":
+          description: "Successfully added stock"
+  /stock/{med_id}:
+    get:
+      operationId: "med.read_one"
+      tags:
+        - Medicine
+      summary: "Read one med"
+      parameters:
+        - $ref: "#/components/parameters/med_id"
+      responses:
+        "200":
+          description: "Successfully read med"
+        "404":
+          description: "Not found"
+    put:
+      operationId: "med.update"
+      tags:
+        - Medicine
+      summary: "Update a medicine"
+      parameters:
+        - $ref: "#/components/parameters/med_id"
+      responses:
+        "200":
+          description: "Successfully updated medicine"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "medicine"
+              $ref: "#/components/schemas/Medicine"
+    delete:
+      operationId: "med.delete"
+      tags:
+        - "Medicine"
+      summary: "Delete stock"
+      parameters: 
+        - $ref: "#/components/parameters/medicine_id"
+      responses:
+          "204":
+            description: "Succesfullt removed stock"
