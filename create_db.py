@@ -9,90 +9,108 @@ class ExampleDB:
         cursor = database_connection.cursor()
         try:
             print("Dropping existing tables (if present)...")
-            cursor.execute("DROP TABLE course")
-            cursor.execute("DROP TABLE student")
-            cursor.execute("DROP TABLE grade")
+            cursor.execute("DROP TABLE staff")
+            cursor.execute("DROP TABLE customers")
+            cursor.execute("DROP TABLE orders")
+            cursor.execute("DROP TABLE stock")
         except sqlite3.OperationalError as db_error:
             print(f"Unable to drop table. Error: {db_error}")
         print("Creating tables...")
-        cursor.execute(ExampleDB.CREATE_TABLE_COURSE)
-        cursor.execute(ExampleDB.CREATE_TABLE_STUDENT)
-        cursor.execute(ExampleDB.CREATE_TABLE_GRADE)
+        cursor.execute(ExampleDB.CREATE_TABLE_STAFF)
+        cursor.execute(ExampleDB.CREATE_TABLE_CUSTOMERS)
+        cursor.execute(ExampleDB.CREATE_TABLE_ORDERS)
+        cursor.execute(ExampleDB.CREATE_TABLE_STOCK)
+        
         database_connection.commit()
 
-    #    print("Populating database with sample data...")
-    #   cursor.executemany(ExampleDB.INSERT_STUDENT, ExampleDB.sample_students)
-    #   cursor.executemany(ExampleDB.INSERT_COURSE, ExampleDB.sample_courses)
-    #   cursor.executemany(ExampleDB.INSERT_GRADE, ExampleDB.sample_grades)
-    #   database_connection.commit()
+        print("Populating database with sample data...")
+        cursor.executemany(ExampleDB.INSERT_STAFF, ExampleDB.sample_staff)
+        cursor.executemany(ExampleDB.INSERT_CUSTOMER, ExampleDB.sample_customers)
+        cursor.executemany(ExampleDB.INSERT_ORDER, ExampleDB.sample_orders)
+        cursor.executemany(ExampleDB.INSERT_STOCK, ExampleDB.sample_stock)
+        database_connection.commit()
 
-    CREATE_TABLE_STUDENT = """
-    CREATE TABLE IF NOT EXISTS student (
-        student_id INTEGER PRIMARY KEY,
-        first_name TEXT NOT NULL,
-        last_name TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE,
-        phone TEXT
+    CREATE_TABLE_STAFF = """
+    CREATE TABLE IF NOT EXISTS staff (
+        employee_id INTEGER PRIMARY KEY,
+        full_name TEXT NOT NULL,
+        username TEXT NOT NULL,
+        password TEXT NOT NULL,
+        employee_type INTEGER NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT NOT NULL
     )
     """
 
-    CREATE_TABLE_COURSE = """
-    CREATE TABLE IF NOT EXISTS course (
-        course_id TEXT PRIMARY KEY,
-        course_name TEXT UNIQUE NOT NULL,
-        description TEXT
+    CREATE_TABLE_CUSTOMERS = """
+    CREATE TABLE IF NOT EXISTS customers (
+        customer_id INTEGER PRIMARY KEY,
+        full_name TEXT NOT NULL,
+        username TEXT NOT NULL,
+        password TEXT NOT NULL,
+        sex TEXT NOT NULL,
+        age INTEGER NOT NULL,
+        height INTEGER NOT NULL,
+        weight INTEGER NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT NOT NULL
     )
     """
 
-    CREATE_TABLE_GRADE = """
-    CREATE TABLE IF NOT EXISTS grade (
-        grade_id INTEGER PRIMARY KEY,
+
+    CREATE_TABLE_ORDERS = """
+    CREATE TABLE IF NOT EXISTS orders (
+        order_id INTEGER PRIMARY KEY,
+        medicine_id INTEGER NOT NULL,
+        customer_id INTEGER NOT NULL,
+        employee_id TEXT NOT NULL,
         date TEXT NOT NULL,
-        grade REAL NOT NULL,
-        student_id INTEGER NOT NULL,
-        course_id TEXT NOT NULL,
-        FOREIGN KEY (student_id) 
-            REFERENCES student(student_id)
-            ON UPDATE CASCADE
-            ON DELETE RESTRICT,
-        FOREIGN KEY (course_id)
-            REFERENCES course(course_id)
-            ON UPDATE CASCADE
-            ON DELETE RESTRICT
+        medicine_quantity INTEGER NOT NULL,
+        address TEXT NOT NULL,
+        subtotal INTEGER NOT NULL,
+        reason_customer TEXT NOT NULL,
+        status TEXT NOT NULL,
+        reason_employee TEXT NOT NULL
+    )
+    """ 
+    
+
+    CREATE_TABLE_STOCK = """
+    CREATE TABLE IF NOT EXISTS stock (
+        medicine_id INTEGER PRIMARY KEY,
+        medicine_name TEXT UNIQUE NOT NULL,
+        medicine_quantity INTEGER NOT NULL,
+        price_stuck INTEGER NOT NULL,
+        description TEXT NOT NULL
     )
     """
 
-    INSERT_STUDENT = "INSERT INTO student VALUES (?, ?, ?, ?, ?)"
-    INSERT_COURSE = "INSERT INTO course VALUES (?, ?, ?)"
-    INSERT_GRADE = "INSERT INTO grade VALUES (?, ?, ?, ?, ?)"
 
-    #sample_students = [
-    # (1, "Tim", "Jansma", "t.jansma@fontys.nl", "+31401234567"),
-    # (2, "Bart", "Zanden, vd", "bart.vanderzanden@fontys.nl", "+31409012345"),
-    #(3, "Stan", "Hartingsveldt", "s.hartingsveldt@fontys.nl", "+31407890123"),
-    #(4, "Xuemei", "Pu", "x.pu@fontys.nl", "+31404567890"),
-    #(5, "Mehrzad", "Verdizadegan", "m.verdizadegan@fontys.nl", "+31407654321")
-    #]
+    INSERT_STAFF = "INSERT INTO staff VALUES (?, ?, ?, ?, ?, ?, ?)"
+    INSERT_CUSTOMER = "INSERT INTO customers VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    INSERT_ORDER = "INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    INSERT_STOCK = "INSERT INTO stock VALUES (?, ?, ?, ?, ?)"
 
-    #sample_courses = [
-    #    ("I2CBPR", "Programming for Infrastructure", "Learn to program in Python for Infrastructure student."),
-    #    ("I2CBCP", "Connecting & Provisioning", "Roll out stuff and tie it together."),
-    #    ("I2CBMS", "Managing & Securing", "Keep it all in control and locked up."),
-    #    ("I2CBCS", "Case Study", "Do everything as a team.")
-    #]
+    sample_staff = [
+        (1, "Michael De Santa", "admin_pharm_518", "root", 1, "michael@gmail.com", "+40123456789"),
+        (2, "Franklin Clinton", "pharm_518", "password", 2, "franklin@gmail.com", "+12343213122"),
+        (3, "Trevor Philips", "warehouse_518", "password", 3, "trevor@gmail.com", "+12313213312")
+    ]
 
-    #sample_grades = [
-    #    (1, "01-09-2023", 9.5, 1, "I2CBPR"),
-    #    (2, "01-09-2023", 9.6, 2, "I2CBPR"),
-    #    (3, "03-09-2023", 8.5, 1, "I2CBCP"),
-    #    (4, "03-09-2023", 9.5, 3, "I2CBCP"),
-    #    (5, "02-09-2023", 5.5, 1, "I2CBMS"),
-    #    (6, "02-09-2023", 9.5, 5, "I2CBMS"),
-    #    (7, "04-09-2023", 9.9, 4, "I2CBCS"),
-    #    (8, "04-09-2023", 8.1, 5, "I2CBCS"),
-    #    (9, "04-09-2023", 7.5, 1, "I2CBCS"),
-    #    (10, "01-09-2023", 9.4, 3, "I2CBPR")
-    #]
+    sample_customers = [
+        (0, "Lester Crest", "lester", "1234", "M", "41", 165, 80, "lester@gmail.com", "+1231231321"),
+        (1, "Lamar Davis", "lamar", "1234", "M", "31", 181, 95, "lamar@gmail.com", "+12312312321")
+    ]
+
+    sample_orders = [
+        (0, 0, 0, "", "23-04-2024", 5, "asdadasddsadas", 10, "I have headaches", "pending approval", ""),
+        (1, 1, 1, "2", "23-04-2024", 10, "adsadadasad", 30, "My grandma needs them", "rejected", "Cannot do orders for someone else" )
+    ]
+
+    sample_stock = [
+        (0, "Ibuprofen", 100, 2, "Med for headaches"),
+        (1, "Paracetamol", 200, 3, "Med for grandmas")
+    ]
 
 def main():
     """Execute main function."""
