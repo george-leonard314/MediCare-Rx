@@ -1,0 +1,97 @@
+openapi: 3.0.3
+info:
+  title: Flask User API
+  description: " "
+  version: 1.0.0
+servers:
+  - url: /api
+    description: Local server for MediCare-Rx
+
+components:
+  schemas:
+    stock:
+      type: "object"
+      required:
+        - medicine_name
+        - medicine_quantity
+        - price_stuck
+        - description
+      properties:
+        medicine_id:
+          type: "string"
+        medicine_name:
+          type: "string"
+        medicine_quantity:
+          type: "integer"
+        price_stuck:
+          type: "integer"
+        description:
+          type: "string"
+  parameters:
+    medicine_id:
+      name: "medicine_id"
+      description: "Unique identifier for med"
+      in: path
+      required: true
+      schema:
+        type: "integer"
+
+paths: 
+  /stock:
+    get:
+      operationId: "stock_functions.read_all"
+      tags:
+        - Stock
+      summary: "Stock available"
+      responses:
+        "200":
+          description: "Succesfully read stock available"
+  /stock/add:
+    post:
+      operationId: "stock_functions.add"
+      tags:
+        - Stock
+      summary: "Add a medicine"
+      requestBody:
+        description: "Stock to add"
+        required: true
+        content:
+          application/json:
+            schema:
+              x-body-name: "stock"
+              $ref: "#components/schemas/stock"
+      responses: 
+        "201":
+          description: "Succesfully added medicine"
+  /stock/remove/{medicine_id}:
+    delete:
+      operationId: "stock_functions.remove"
+      tags:
+        - Stock
+      summary: "Delete stock"
+      parameters:
+        - $ref: "#components/parameters/medicine_id"
+      responses:
+          "204":
+            description: "Succesfully deleted stock"
+    
+  /stock/update/{medicine_id}:
+    put:
+      operationId: "stock_functions.update"
+      tags:
+        - Stock
+      summary: "Update stock"
+      parameters:
+        - $ref: "#components/parameters/medicine_id"
+      responses:
+        "200":
+          description: "Succsefully update medicine"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "stock"
+              $ref: "#/components/schemas/stock"
+
+
+
