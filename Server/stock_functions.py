@@ -2,7 +2,7 @@ import sqlite3
 from flask import jsonify, request
 from config import CONFIG
 import sys
-sys.path.append('/home/g/Programming Asignment/MediCare-Rx again/flaskProject')
+sys.path.append('/home/g/Programming Asignment/MediCare-Rx')
 
 def dict_factory(cursor, row):
     fields = [ column[0] for column in cursor.description ]

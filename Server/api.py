@@ -1,6 +1,6 @@
 import connexion
 import sys
-sys.path.append('/home/g/Programming Asignment/MediCare-Rx again/flaskProject')
+sys.path.append('/home/g/Programming Asignment/MediCare-Rx')
 from config import CONFIG
 
 app = connexion.FlaskApp(__name__)

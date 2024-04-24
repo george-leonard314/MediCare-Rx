@@ -1,6 +1,6 @@
 import sqlite3
 import sys
-sys.path.append('/home/g/Programming Asignment/MediCare-Rx again/flaskProject')
+sys.path.append('/home/g/Programming Asignment/MediCare-Rx')
 from config import CONFIG
 
 

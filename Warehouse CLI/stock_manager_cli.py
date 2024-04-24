@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/home/g/Programming Asignment/MediCare-Rx again/flaskProject')
+sys.path.append('/home/g/Programming Asignment/MediCare-Rx')
 import argparse
 import sys
 from config import CONFIG
