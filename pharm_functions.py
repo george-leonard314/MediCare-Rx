@@ -14,5 +14,5 @@ def remove_stock(med_id):
 def list_stock():
     pass
 
-def update_stock(med_id):
+def update_stock(med_id, med_quantity):
     pass

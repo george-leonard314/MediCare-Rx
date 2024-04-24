@@ -82,7 +82,7 @@ class ExampleDB:
 
     CREATE_TABLE_STOCK = """
     CREATE TABLE IF NOT EXISTS stock (
-        medicine_id INTEGER PRIMARY KEY,
+        medicine_id INTEGER PRIMARY KEY AUTOINCREMENT,
         medicine_name TEXT UNIQUE NOT NULL,
         medicine_quantity INTEGER NOT NULL,
         price_stuck INTEGER NOT NULL,

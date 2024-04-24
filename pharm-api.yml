@@ -26,7 +26,21 @@ components:
           type: "integer"
         med_description:
           type: "string"
-
+  parameters:
+    med_name:
+      name: "med_name"
+      description: "Medicine name"
+      in: path
+      required: True
+      schema: 
+        type: "string"
+    med_id:
+      name: "med_id"
+      description: "Unique identifier for med"
+      in: path
+      required: True
+      schema:
+        type: "integer"
 paths:
   /stock:
     get:
@@ -49,7 +63,7 @@ paths:
           application/json:
             schema:
               x-body-name: "med"
-              $ref: "#/components/schemas/Medicine"
+              $ref: "#/components/schemas/Stock"
       responses:
         "201":
           description: "Successfully added stock"
@@ -81,14 +95,14 @@ paths:
           application/json:
             schema:
               x-body-name: "medicine"
-              $ref: "#/components/schemas/Medicine"
+              $ref: "#/components/schemas/Stock"
     delete:
       operationId: "med.delete"
       tags:
         - "Medicine"
       summary: "Delete stock"
       parameters: 
-        - $ref: "#/components/parameters/medicine_id"
+        - $ref: "#/components/parameters/med_id"
       responses:
           "204":
             description: "Succesfullt removed stock"
