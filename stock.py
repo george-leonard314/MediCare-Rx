@@ -1,5 +1,4 @@
 import sqlite3
-
 from flask import jsonify
 
 from config import CONFIG
@@ -74,3 +73,4 @@ def delete(med_id):
     db_conn.commit()
 
     return "Succesfully deleted.", 204
+

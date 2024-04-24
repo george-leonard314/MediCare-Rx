@@ -1,7 +1,9 @@
+#! Pharmacy API
+
 openapi: 3.0.0
 info:
   title: "MediCare-Rx"
-  description: "API for managing orders and employees"
+  description: "API for managing orders, and employees"
   version: "1.0.0"
 
 servers:
@@ -29,14 +31,14 @@ components:
       name: "med_name"
       description: "Medicine name"
       in: path
-      required: true
+      required: True
       schema: 
         type: "string"
     med_id:
       name: "med_id"
       description: "Unique identifier for med"
       in: path
-      required: true
+      required: True
       schema:
         type: "integer"
 paths:
@@ -48,7 +50,7 @@ paths:
       summary: "Read the list of stock available"
       responses:
         "200":
-          description: "Successfully read the available stock"
+          description: "Succesfully read the available stock"
     post:
       operationId: "stock.add"
       tags:
@@ -102,5 +104,5 @@ paths:
       parameters: 
         - $ref: "#/components/parameters/med_id"
       responses:
-          "200":
-            description: "Successfully removed stock"
+          "204":
+            description: "Succesfullt removed stock"
