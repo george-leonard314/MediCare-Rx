@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='mvp.css')}}">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <title>Admin Dashboard</title>
+    </head>
+    <body>
+        <h1>ADMIN Dashboard</h1>
+        <p>
+            Keep tabs on employees.
+        </p>
+        {% block html_body %}{% endblock %}
+        <p>
+            <a href="/admin/staff">Back to main page</a>
+        </p>
+    </body>
+</html>

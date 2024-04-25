@@ -27,7 +27,29 @@ components:
           type: "integer"
         description:
           type: "string"
+    staff:
+      type: "object"
+      properties:
+        full_name:
+          type: "string"
+        username:
+          type: "string"
+        password:
+          type: "string"
+        employee_type:
+          type: "string"
+        email:
+          type: "string"
+        phone:
+          type: "string"
   parameters:
+    staff_id:
+      name: "employee_id"
+      description: "Unique identifier for staff"
+      in: path
+      required: true
+      schema:
+        type: "integer"
     medicine_id:
       name: "medicine_id"
       description: "Unique identifier for med"
@@ -92,6 +114,76 @@ paths:
             schema:
               x-body-name: "stock"
               $ref: "#/components/schemas/stock"
+
+  /admin/staff:
+    get:
+      operationId: "admin_functions.read_all"
+      tags:
+        - "Staff"
+      summary: "Read the list of employees"
+      responses:
+        "200":
+          description: "Successfully read employees list"
+  /admin/staff/add:
+    post:
+      operationId: "admin_functions.add"
+      tags:
+        - "Staff"
+      summary: "Add an employee"
+      requestBody:
+        description: "Employee details"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "staff"
+              $ref: "#/components/schemas/staff"
+      responses:
+        "201":
+          description: "Successfully added employee"
+  /admin/staff/{employee_id}:
+    get:
+      operationId: "admin_functions.read_one"
+      tags:
+        - Staff
+      summary: "Read one employee"
+      parameters:
+        - $ref: "#/components/parameters/staff_id"
+      responses:
+        "200":
+          description: "Successfully read employee"
+        "404":
+          description: "Not found"
+          
+  /admin/staff/update/{employee_id}:
+    put:
+      operationId: "admin_functions.update"
+      tags:
+        - Staff
+      summary: "Update employee details"
+      parameters:
+        - $ref: "#/components/parameters/staff_id"
+      responses:
+        "200":
+          description: "Successfully updated employee"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "employee"
+              $ref: "#/components/schemas/staff"
+  /admin/staff/remove/{employee_id}:
+    delete:
+      operationId: "admin_functions.remove"
+      tags:
+        - Staff
+      summary: "Delete a employee"
+      parameters:
+        - $ref: "#/components/parameters/staff_id"
+      responses:
+        "204":
+          description: "Successfully deleted employee"
+  
 
 
 

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block html_body %}
+<h2>Edit staff</h2>
+{% if staff_updated is defined %}
+<p>
+    Record updated for:<br>
+    {{staff_updated.full_name}} with staff ID: {{staff_updated.employee_id}}
+</p>
+{% endif %}
+<form id="staff_data" method="post" action="/admin/staff/update/{{ staff.employee_id }}">
+    {% include "staff_data_table.html" %}
+</form>
+{% endblock %}

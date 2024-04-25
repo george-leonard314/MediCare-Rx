@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block html_body %}
+<h2>Add employee</h2>
+{% if new_staff is defined %}
+<p>
+    {{new_staff.full_name}} added with new employee ID: {{new_staff.employee_id}}
+</p>
+{% endif %}
+<form id="staff_data" method="post" action="{{url_for('new_staff')}}">
+    {% include "staff_data_table.html" %}
+</form>
+{% endblock %}

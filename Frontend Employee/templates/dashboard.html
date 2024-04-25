@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block html_body %}
+<table>
+    <thead>
+        <td>Employee ID</td><td>Full name</td><td>username</td><<td>Phone:</td><td>Email:</td><td></td><td></td>
+    </thead>
+    <tbody>
+        {% if removed_staff is defined %}
+        <p>
+            Deleted {{ removed_staff.full_name }} with employee ID {{ removed_staff.employee_id }}
+        </p>
+        {% endif %}
+        {% for staff in staff %}
+        <tr>
+            <td>{{staff.employee_id}}</td>
+            <td>{{staff.full_name}}</td>
+            <td>{{staff.username}}</td>
+            <td>{{staff.email}}</td>
+            <td>{{staff.phone}}</td>
+            <td><a href="/admin/staff/update/{{staff.employee_id}}">Edit</a></td>
+            <td><a href="/admin/staff/remove/{{staff.employee_id}}">Delete</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+<a href="{{ url_for('new_staff') }}">Add employee</a>
+{% endblock %}
