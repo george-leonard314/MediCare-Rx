@@ -1,68 +1,95 @@
-import sqlite3
 from flask import jsonify, request
-from config import CONFIG
-import sys
-sys.path.append('/home/g/Programming Asignment/MediCare-Rx')
+from sqlalchemy.orm import sessionmaker
+from db_config import Stock, engine
 
-def dict_factory(cursor, row):
-    fields = [ column[0] for column in cursor.description ]
-    return {key: value for key, value in zip(fields, row)}
-
-def get_db_connection():
-    db_conn = sqlite3.connect(CONFIG["database"]["name"])
-    db_conn.row_factory = dict_factory
-    return db_conn
+Session = sessionmaker(bind=engine)
 
 def read_all():
-    ALL_STOCK = "SELECT * FROM stock"
-
-    db_conn = get_db_connection()
-    cursor = db_conn.cursor()
-    cursor.execute(ALL_STOCK)
-    resultset = cursor.fetchall()
-    db_conn.close()
-
-    print(resultset)
-    return jsonify(resultset)
-
+    session = Session()
+    try:
+        all_stock = session.query(Stock).all()
+        resultset = [stock.__dict__ for stock in all_stock]
+        for record in resultset:
+            record.pop('_sa_instance_state')  # Remove the SQLAlchemy internal state
+        print(resultset)
+        return jsonify(resultset)
+    finally:
+        session.close()
 
 def add():
-    stock = request.json
-    print("Stock:", stock)  # Add this line to check the value of stock
-    INSERT_STOCK = "INSERT INTO stock (medicine_name, medicine_quantity, price_stuck, description) VALUES (?, ?, ?, ?)"
-    db_conn = get_db_connection()
-    cursor = db_conn.cursor()
-    cursor.execute(INSERT_STOCK, (stock["medicine_name"], stock["medicine_quantity"], stock["price_stuck"], stock["description"]))
-    db_conn.commit()
-    new_med_id = cursor.lastrowid
-    db_conn.close()
-    
-    return new_med_id, 201
+    stock_data = request.json
+    print("Stock:", stock_data)  # Add this line to check the value of stock
 
-def update(medicine_id, stock):
-    UPDATE_MEDICINE = """
-    UPDATE stock
-    SET medicine_name = ?,
-        medicine_quantity = ?,
-        price_stuck = ?,
-        description = ?
-    WHERE medicine_id = ?
-    """
+    new_stock = Stock(
+        medicine_name=stock_data["medicine_name"],
+        medicine_quantity=stock_data["medicine_quantity"],
+        price_stuck=stock_data["price_stuck"],
+        description=stock_data["description"]
+    )
 
-    db_conn = get_db_connection()
-    cursor = db_conn.cursor()
-    cursor.execute(UPDATE_MEDICINE, (stock["medicine_name"], stock["medicine_quantity"], stock["price_stuck"], stock["description"], medicine_id) )
-    db_conn.commit()
+    session = Session()
+    try:
+        session.add(new_stock)
+        session.commit()
+        new_med_id = new_stock.medicine_id
+        return new_med_id, 201
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
-    return medicine_id
+def update(medicine_id):
+    session = Session()
+    stock_data = request.json
+    try:
+        stock = session.query(Stock).filter_by(medicine_id=medicine_id).first()
+        if not stock:
+            return "Stock not found", 404
+        
+        stock.medicine_name = stock_data["medicine_name"]
+        stock.medicine_quantity = stock_data["medicine_quantity"]
+        stock.price_stuck = stock_data["price_stuck"]
+        stock.description = stock_data["description"]
 
+        session.commit()
+        return medicine_id
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
 def remove(medicine_id):
-    DELETE_MED = "DELETE FROM stock WHERE medicine_id=?"
+    session = Session()
+    try:
+        stock = session.query(Stock).filter_by(medicine_id=medicine_id).first()
+        if not stock:
+            return "Stock not found", 404
+        
+        session.delete(stock)
+        session.commit()
+        return "Successfully deleted.", 204
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
-    db_conn = get_db_connection()
-    cursor = db_conn.cursor()
-    cursor.execute(DELETE_MED, (medicine_id, ) )
-    db_conn.commit()
-
-    return "Succesfully deleted.", 204
+def get_one(medicine_id):
+    session = Session()
+    try:
+        stock = session.query(Stock).filter_by(medicine_id=medicine_id).first()
+        if not stock:
+            return jsonify({"error": "Stock not found"}), 404
+        
+        # Convert the SQLAlchemy object to a dictionary
+        stock_dict = stock.__dict__
+        stock_dict.pop('_sa_instance_state', None)  # Remove the SQLAlchemy internal state
+        print(stock_dict)
+        return jsonify(stock_dict), 200
+    except Exception as e:
+        session.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        session.close()

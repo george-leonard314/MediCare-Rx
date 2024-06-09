@@ -1,9 +1,11 @@
-import sys
-sys.path.append('/home/g/Programming Asignment/MediCare-Rx')
+from db_config import *
 from config import CONFIG
 import json
 import requests
-import sys
+
+def check_credentials_admin(user):
+    response = requests.post(f"{CONFIG['api']['url']}/admin/login", json=user)
+    return response
 
 def get_staff(id):
     result = requests.get( f"{CONFIG['api']['url']}/admin/staff/{id}")

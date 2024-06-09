@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders</title>
+    <style>
+        /* Custom CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #007bff; /* Blue color */
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3; /* Darker blue color on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>My Orders</h1>
+    {% if orders %}
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Medicine name</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ medicine[order.medicine_id].medicine_name }}</td>
+                <td>{{ order.medicine_quantity }}</td>
+                <td>{{ order.subtotal }}</td>
+                <td>{{ order.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>There are no orders yet.</p>
+    {% endif %}
+    <a class="btn" href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+</body>
+</html>

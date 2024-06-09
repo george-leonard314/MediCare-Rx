@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        /* Reset default margin and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Style for the top bar */
+        .top-bar {
+            background-color: #333; /* Dark gray background */
+            color: #fff; /* White text */
+            padding: 10px 20px; /* Padding for the content inside */
+            display: flex; /* Make the content flexbox */
+            justify-content: space-between; /* Align items with space between */
+            align-items: center; /* Align items vertically */
+        }
+
+        /* Style for the logo */
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Style for the navigation links */
+        .nav-links {
+            display: flex;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        /* Style for the gray area */
+        .gray-area {
+            background-color: #eee; /* Light gray background */
+            padding: 20px; /* Padding for the content inside */
+        }
+
+        /* Style for the black square */
+        .black-square {
+            background-color: #000; /* Black background */
+            color: #fff; /* White text */
+            padding: 10px; /* Padding for the content inside */
+            margin-top: 20px; /* Add some space between the gray area and the black square */
+        }
+
+        /* Style for the medicine div */
+        .medicine {
+            background-color: #fff; /* White background */
+            padding: 20px; /* Padding for the content inside */
+            margin-top: 20px; /* Add some space between each medicine */
+        }
+
+        /* Center the medicine div */
+        .medicine-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap; /* Allow divs to wrap if not enough space */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <div class="logo">MediCare-Rx</div>
+        <div class="nav-links">
+            <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="{{ url_for('dashboard') }}">Back</a>
+        </div>
+    </div>
+
+    <div class="gray-area">
+        <h1>Accounts for approval!</h1>
+        <div class="medicine-container">
+            {% for account in customers %}
+            <div class="medicine">
+                <span>Id: {{ account.customer_id }}</span><br>
+                <span>Full name: {{ account.full_name }}</span><br>
+                <span>Username: {{ account.username }}</span><br>
+                <span>Sex: {{ account.sex }}  </span><br>
+                <span>Age: {{ account.age }}  </span><br>
+                <span>Height: {{ account.height }} cm </span><br>
+                <span>Weight: {{ account.weight }} kg </span><br>
+                <span>Email: {{ account.email }}  </span><br>
+                <span>Phone: {{ account.phone }}  </span><br>
+                <form action="{{ url_for('response', customer_id=account.customer_id) }}" method="POST">
+                    <label for="status">Status:</label>
+                    <select name="status" id="status">
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select><br>
+                    <label for="reason">Reason:</label><br>
+                    <textarea name="reason" id="reason" rows="4" cols="30"></textarea><br>
+                    <button type="submit">Submit</button>
+                </form>
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

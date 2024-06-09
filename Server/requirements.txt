@@ -1,0 +1,7 @@
+flask
+connexion[swagger-ui]==2.14.2
+requests
+sqlalchemy
+connexion
+connexion[flask]
+connexion[uvicorn]

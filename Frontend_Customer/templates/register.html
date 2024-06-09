@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2; /* Added background color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .register-container {
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* Lightened background color */
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.1); /* Adjusted box shadow */
+        }
+
+        h2 {
+            font-size: 1.8em; /* Adjusted font size */
+            margin-bottom: 20px;
+            color: #333; /* Adjusted text color */
+            text-align: center; /* Centered text */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px; /* Reduced margin bottom */
+            font-size: 1em; /* Adjusted font size */
+            color: #333; /* Adjusted text color */
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"],
+        select {
+            width: calc(100% - 24px); /* Adjusted width */
+            padding: 10px;
+            margin-bottom: 12px; /* Reduced margin bottom */
+            border: none;
+            border-radius: 5px;
+            background-color: #f5f5f5; /* Lightened background color */
+        }
+
+        input[type="submit"] {
+            width: calc(100% - 24px); /* Adjusted width */
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em; /* Adjusted font size */
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Register</h2>
+        <form method="POST" action="{{ url_for('register') }}">
+            <label for="fullname">Full Name:</label>
+            <input type="text" id="fullname" name="fullname" pattern="[a-zA-Z\s]+" title="Only letters and spaces allowed" required>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" minlength="8" required>
+
+            <label for="sex">Sex:</label>
+            <select id="sex" name="sex" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" min="18" required>
+
+            <label for="height">Height (in cm):</label>
+            <input type="number" id="height" name="height" required>
+
+            <label for="weight">Weight (in kg):</label>
+            <input type="number" id="weight" name="weight" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" pattern="[0-9]{1,4}[0-9\s]{8,12}" title="Please enter a valid phone number with country code (up to 15 digits)" required>
+
+            <input type="submit" value="Register">
+        </form>
+    </div>
+</body>
+</html>

@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Flask User API
-  description: " "
+  description: "API for MediCare-Rx"
   version: 1.0.0
 servers:
   - url: /api
@@ -9,6 +9,74 @@ servers:
 
 components:
   schemas:
+    
+    # Schema for order
+    
+    order:
+      type: "object"
+      properties:
+        medicine_id:
+          type: "integer"
+        customer_id:
+          type: "integer"
+        employee_id:
+          type: "integer"
+        medicine_quantity:
+          type: "integer"
+        address:
+          type: "string"
+        subtotal:
+          type: "integer"
+        reason_customer:
+          type: "string"
+        status:
+          type: "string"
+        reason_employee:
+          type: "string"
+
+    #Schema for customers
+    
+    customer_account:
+      type: "object"
+      properties:
+        customer_id:
+          type: "integer"
+        fullname:
+          type: "string"
+        username:
+          type: "string"
+        password:
+          type: "string"
+        sex:
+          type: "string"
+        age:
+          type: "integer"
+        height:
+          type: "integer"
+        weight:
+          type: "integer"
+        email:
+          type: "string"
+        phone:
+          type: "string"
+        validation:
+          type: "string"
+    
+    #Schema for credentials
+
+    credentials:
+      type: "object"
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: "string"
+        password:
+          type: "string"
+    
+    #Schema for stock
+    
     stock:
       type: "object"
       required:
@@ -27,22 +95,47 @@ components:
           type: "integer"
         description:
           type: "string"
+
+  # Schema for Employees
     staff:
+        type: "object"
+        properties:
+          full_name:
+            type: "string"
+          username:
+            type: "string"
+          password:
+            type: "string"
+          employee_type:
+            type: "string"
+          email:
+            type: "string"
+          phone:
+            type: "string"
+    reason:
       type: "object"
       properties:
-        full_name:
+        status:
           type: "string"
-        username:
+        reason:
           type: "string"
-        password:
-          type: "string"
-        employee_type:
-          type: "string"
-        email:
-          type: "string"
-        phone:
-          type: "string"
+  #Parameters for links
+
   parameters:
+    medicine_id:
+      name: "medicine_id"
+      description: "unique identifier for medicine"
+      in: path
+      required: true
+      schema:
+        type: "integer"
+    order_id:
+      name: "order_id"
+      description: "Unique identifier for orders"
+      in: path
+      required: true
+      schema:
+        type: "integer"
     staff_id:
       name: "employee_id"
       description: "Unique identifier for staff"
@@ -50,15 +143,18 @@ components:
       required: true
       schema:
         type: "integer"
-    medicine_id:
-      name: "medicine_id"
-      description: "Unique identifier for med"
+    customer_id:
+      name: "customer_id"
+      description: "Unique identifier for customer"
       in: path
       required: true
       schema:
         type: "integer"
 
-paths: 
+
+paths:
+
+  #Paths related to stock
   /stock:
     get:
       operationId: "stock_functions.read_all"
@@ -96,7 +192,15 @@ paths:
       responses:
           "204":
             description: "Succesfully deleted stock"
-    
+  /stock/get_one/{medicine_id}:
+    get:
+      operationId: "stock_functions.get_one"
+      tags:
+        - Stock
+      summary: "Get one stock"
+      responses:
+        "200":
+          description: "Succesfully extract one stock"
   /stock/update/{medicine_id}:
     put:
       operationId: "stock_functions.update"
@@ -115,75 +219,250 @@ paths:
               x-body-name: "stock"
               $ref: "#/components/schemas/stock"
 
-  /admin/staff:
-    get:
-      operationId: "admin_functions.read_all"
-      tags:
-        - "Staff"
-      summary: "Read the list of employees"
-      responses:
-        "200":
-          description: "Successfully read employees list"
-  /admin/staff/add:
+  #Paths related to customer
+  /customer/login:
     post:
-      operationId: "admin_functions.add"
+      operationId: "customer_functions.login"
       tags:
-        - "Staff"
-      summary: "Add an employee"
+        - Customer
+      summary: "Check credentials"
       requestBody:
-        description: "Employee details"
-        required: True
+        description: "Credentials"
+        required: true
         content:
           application/json:
             schema:
-              x-body-name: "staff"
-              $ref: "#/components/schemas/staff"
+              x-body-name: "credentials"
+              $ref: "#components/schemas/credentials"
+      responses: 
+        "200":
+          description: "Succesfully checked"
+  /customer/register:
+    post:
+      operationId: "customer_functions.register"
+      tags:
+        - Customer
+      summary: "Add account"
+      requestBody:
+        description: "New account"
+        required: true
+        content:
+          application/json:
+            schema:
+              x-body-name: "customer_account"
+              $ref: "#components/schemas/customer_account"
+      responses:
+        "200":
+          description: "Succsefully added"
+  /customer/order:
+    post:
+      operationId: "customer_functions.new_order"
+      tags:
+        - Customer
+      summary: "This functions will receive the order"
+      requestBody:
+        description: "New order"
+        required: true
+        content:
+          application/json:
+            schema:
+              x-body-name: "order"
+              $ref: "#components/schemas/order"
       responses:
         "201":
-          description: "Successfully added employee"
-  /admin/staff/{employee_id}:
+          description: "Succesfully ordered"
+  /customer/myorders/{user_id}:
     get:
-      operationId: "admin_functions.read_one"
+      operationId: "customer_functions.get_user_orders"
       tags:
-        - Staff
-      summary: "Read one employee"
-      parameters:
-        - $ref: "#/components/parameters/staff_id"
+        - Orders
+      summary: "Orders targeted per user"
       responses:
         "200":
-          description: "Successfully read employee"
-        "404":
-          description: "Not found"
-          
-  /admin/staff/update/{employee_id}:
-    put:
-      operationId: "admin_functions.update"
+          description: "Succesfully displayed user orders"
+
+# Admin functionss
+  /admin/login:
+    post:
+      operationId: "admin_functions.login"
       tags:
-        - Staff
-      summary: "Update employee details"
-      parameters:
-        - $ref: "#/components/parameters/staff_id"
-      responses:
-        "200":
-          description: "Successfully updated employee"
+        - Employee
+      summary: "Check credentials"
       requestBody:
+        description: "Credentials"
+        required: true
         content:
           application/json:
             schema:
-              x-body-name: "employee"
-              $ref: "#/components/schemas/staff"
+              x-body-name: "credentials"
+              $ref: "#components/schemas/credentials"
+      responses: 
+        "200":
+          description: "Succesfully checked"
+
+  /admin/staff:
+      get:
+        operationId: "admin_functions.read_all"
+        tags:
+          - "Staff"
+        summary: "Read the list of employees"
+        responses:
+          "200":
+            description: "Successfully read employees list"
+  /admin/staff/add:
+      post:
+        operationId: "admin_functions.add"
+        tags:
+          - "Staff"
+        summary: "Add an employee"
+        requestBody:
+          description: "Employee details"
+          required: True
+          content:
+            application/json:
+              schema:
+                x-body-name: "staff"
+                $ref: "#/components/schemas/staff"
+        responses:
+          "201":
+            description: "Successfully added employee"
+  /admin/staff/{employee_id}:
+      get:
+        operationId: "admin_functions.read_one"
+        tags:
+          - Staff
+        summary: "Read one employee"
+        parameters:
+          - $ref: "#/components/parameters/staff_id"
+        responses:
+          "200":
+            description: "Successfully read employee"
+          "404":
+            description: "Not found"
+            
+  /admin/staff/update/{employee_id}:
+      put:
+        operationId: "admin_functions.update"
+        tags:
+          - Staff
+        summary: "Update employee details"
+        parameters:
+          - $ref: "#/components/parameters/staff_id"
+        responses:
+          "200":
+            description: "Successfully updated employee"
+        requestBody:
+          content:
+            application/json:
+              schema:
+                x-body-name: "employee"
+                $ref: "#/components/schemas/staff"
   /admin/staff/remove/{employee_id}:
-    delete:
-      operationId: "admin_functions.remove"
-      tags:
-        - Staff
-      summary: "Delete a employee"
-      parameters:
-        - $ref: "#/components/parameters/staff_id"
-      responses:
-        "204":
-          description: "Successfully deleted employee"
+      delete:
+        operationId: "admin_functions.remove"
+        tags:
+          - Staff
+        summary: "Delete a employee"
+        parameters:
+          - $ref: "#/components/parameters/staff_id"
+        responses:
+          "204":
+            description: "Successfully deleted employee"
+
+# Pharmacists functionss
+
+  /pharmacist/{customer_id}:
+      post:
+        operationId: "pharmacist_functions.response_account"
+        tags:
+          - Pharmacists
+        summary: "respond customer_account"
+        requestBody:
+          description: "Reason"
+          required: true
+          content:
+            application/json:
+              schema:
+                x-body-name: "reason"
+                $ref: "#components/schemas/reason"
+        parameters:
+          - $ref: "#/components/parameters/customer_id"
+        responses:
+          "200":
+            description: "Successfully added employee"
+
+  /pharmacist/pending-customers:
+      get:
+        operationId: "pharmacist_functions.display_accounts"
+        tags:
+          - Pharmacists
+        summary: "Display pending_customers"
+        responses:
+          "200":
+            description: "Successfully send list"
+  /pharmacist/pending-orders:
+      get:
+        operationId: "pharmacist_functions.display_pending_orders"
+        tags:
+          - Pharmacists
+        summary: "Display pending_orders"
+        responses:
+          "200":
+            description: "Successfully send list"
+
+  /pharmacist/customer/{customer_id}:
+      get:
+        operationId: "pharmacist_functions.get_customer"
+        tags:
+          - Pharmacists
+        summary: "Display customer"
+        parameters:
+          - $ref: "#/components/parameters/customer_id"
+        responses:
+          "200":
+            description: "Successfully send"
+
+  /pharmacist/order/{order_id}:
+      get:
+        operationId: "pharmacist_functions.get_order"
+        tags:
+          - Pharmacists
+        summary: "Display order"
+        parameters:
+          - $ref: "#/components/parameters/order_id"
+        responses:
+          "200":
+            description: "Successfully send order"
+
+  /pharmacist/customer/remove/{customerid}:
+      post:
+        operationId: "pharmacist_functions.remove_account"
+        tags:
+          - Pharmacists
+        summary: "respond remove account"
+        parameters:
+          - $ref: "#/components/parameters/customer_id"
+        responses:
+          "200":
+            description: "Successfully added employee"
+  /pharmacist/order/respond/{order_id}:
+      post:
+        operationId: "pharmacist_functions.response_order"
+        tags:
+          - Pharmacists
+        summary: "respond order"
+        requestBody:
+          description: "Reason"
+          required: true
+          content:
+            application/json:
+              schema:
+                x-body-name: "reason"
+                $ref: "#components/schemas/reason"
+        parameters:
+          - $ref: "#/components/parameters/order_id"
+        responses:
+          "200":
+            description: "Successfully added employee"
   
-
-
-
+  

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Welcome to the Dashboard</h1>
+    <div class="actions">
+        <a href="{{ url_for('customer_accounts') }}" class="btn">View Pending Accounts</a>
+        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer ID</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.get('order_id', 'N/A') }}</td>
+                <td>{{ order.get('customer_id', 'N/A') }}</td>
+                <td>{{ order.get('status', 'N/A') }}</td>
+                <td>
+                    <a href="{{ url_for('view_customer', order_id=order.get('order_id', 'N/A')) }}" class="btn">See Customer</a>
+                    <a href="{{ url_for('order', order_id=order.get('order_id', 'N/A')) }}" class="btn">View Order Details</a>
+                    <a href="{{ url_for('medicine', order_id=order.get('order_id', 'N/A')) }}" class="btn">View Medicine Details</a>
+                    {% if order.get('status') == "Pending" %}
+                    <form action="{{ url_for('order', order_id=order.get('order_id', 'N/A')) }}" method="post">
+                        <select name="status">
+                            <option value="accept">approved</option>
+                            <option value="reject">rejected</option>
+                        </select>
+                        <input type="text" name="reason" placeholder="Reason" required>
+                        <button type="submit" class="btn">Submit</button>
+                    </form>
+                    {% endif %}
+
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

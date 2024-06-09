@@ -1,76 +1,93 @@
-import sqlite3
 from flask import jsonify, request
-from config import CONFIG
-import sys
-from stock_functions import dict_factory, get_db_connection
-sys.path.append('/home/g/Programming Asignment/MediCare-Rx')
+from db_config import Session, Staff
 
 def read_all():
-    ALL_STAFF = "SELECT * FROM staff"
-
-    db_conn = get_db_connection()
-    cursor = db_conn.cursor()
-    cursor.execute(ALL_STAFF)
-    resultset = cursor.fetchall()
-    db_conn.close()
-
-    print(resultset)
-    return jsonify(resultset)
+    session = Session()
+    resultset = session.query(Staff).all()
+    session.close()
+    return jsonify([staff.to_dict() for staff in resultset])
 
 def add():
     staff = request.json
-    print("Employee:", staff)  # Add this line to check the value of stock
-    INSERT_STAFF = "INSERT INTO staff (full_name, username, password, employee_type, email, phone) VALUES (?, ?, ?, ?, ?, ?)"
-    db_conn = get_db_connection()
-    cursor = db_conn.cursor()
-    cursor.execute(INSERT_STAFF, (staff["full_name"], staff["username"], staff["password"], staff["employee_type"], staff["email"], staff["phone"]))
-    db_conn.commit()
-    new_staff_id = cursor.lastrowid
-    db_conn.close()
-
+    print("Employee:", staff)
+    
+    new_staff = Staff(
+        full_name=staff["full_name"],
+        username=staff["username"],
+        password=staff["password"],
+        employee_type=staff["employee_type"],
+        email=staff["email"],
+        phone=staff["phone"]
+    )
+    
+    session = Session()
+    session.add(new_staff)
+    session.commit()
+    new_staff_id = new_staff.employee_id
+    session.close()
+    
     return new_staff_id, 201
 
 def update(employee_id):
     staff = request.json
-    UPDATE_STAFF = """
-    UPDATE staff
-    SET full_name = ?,
-        username = ?,
-        password = ?,
-        employee_type = ?,
-        email = ?,
-        phone = ?
-    WHERE employee_id = ?
-    """
-
-    db_conn = get_db_connection()
-    cursor = db_conn.cursor()
-    cursor.execute(UPDATE_STAFF, (staff["full_name"], staff["username"], staff["password"], staff["employee_type"], staff["email"], staff["phone"], employee_id) )
-    db_conn.commit()
+    
+    session = Session()
+    existing_staff = session.query(Staff).filter_by(employee_id=employee_id).first()
+    
+    if not existing_staff:
+        return "Not found", 404
+    
+    existing_staff.full_name = staff["full_name"]
+    existing_staff.username = staff["username"]
+    existing_staff.password = staff["password"]
+    existing_staff.employee_type = staff["employee_type"]
+    existing_staff.email = staff["email"]
+    existing_staff.phone = staff["phone"]
+    
+    session.commit()
+    session.close()
+    
     return employee_id
 
 def remove(employee_id):
-    DELETE_STAFF = "DELETE FROM staff WHERE employee_id=?"
-
-    db_conn = get_db_connection()
-    cursor = db_conn.cursor()
-    cursor.execute(DELETE_STAFF, (employee_id, ) )
-    db_conn.commit()
-
-    return "Succesfully deleted.", 204
+    session = Session()
+    staff = session.query(Staff).filter_by(employee_id=employee_id).first()
+    
+    if not staff:
+        return "Not found", 404
+    
+    session.delete(staff)
+    session.commit()
+    session.close()
+    
+    return "Successfully deleted.", 204
 
 def read_one(employee_id):
-    GET_STAFF = "SELECT * FROM staff WHERE employee_id = ?"
-
-    db_conn = get_db_connection()
-    cursor = db_conn.cursor()
-    cursor.execute(GET_STAFF, (employee_id, ) )
-    resultset = cursor.fetchall()
-    db_conn.close()
-
-    if len(resultset) < 1:
+    session = Session()
+    staff = session.query(Staff).filter_by(employee_id=employee_id).all()
+    session.close()
+    
+    if len(staff) < 1:
         return "Not found", 404
-    elif len(resultset) > 2:
+    elif len(staff) > 1:
         return "Too many results found.", 500
+    
+    return jsonify(staff[0].to_dict())
 
-    return jsonify(resultset[0])
+def login():
+    data = request.get_json()
+
+    username = data.get("username")
+    password = data.get("password")
+
+    session = Session()
+    try:
+        staff = session.query(Staff).filter_by(username=username).first()
+        if staff and staff.password == password:
+            return jsonify({"staff_id": staff.employee_id, "employee_type": staff.employee_type}), 200
+        else:
+            return jsonify({"error": "Invalid username or password, or invalid account"}), 401
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    finally:
+        session.close()

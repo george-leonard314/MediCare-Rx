@@ -1,0 +1,41 @@
+services:
+  database:
+    build:
+      context: .
+      dockerfile: database.Dockerfile
+    volumes:
+      - Database:/Database
+
+  server:
+    build:
+      context: .
+      dockerfile: server.Dockerfile
+    volumes:
+      - Database:/Database
+    ports:
+      - 8083:8083
+
+  employee:
+    depends_on:
+      - server
+    build:
+      context: .
+      dockerfile: frontend-employee.Dockerfile
+    volumes:
+      - Database:/Database
+    ports:
+      - 8089:8089
+
+  customer:
+    depends_on:
+      - server
+    build:
+      context: .
+      dockerfile: frontend-customer.Dockerfile
+    volumes:
+      - Database:/Database
+    ports:
+      - 8081:8081
+
+volumes:
+  Database:
