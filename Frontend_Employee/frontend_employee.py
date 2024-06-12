@@ -142,7 +142,7 @@ def new_staff():
         staff = {}
         staff["full_name"] = request.form["full_name"]
         staff["username"] = request.form["username"]
-        staff["password"] = request.form["password"]
+        staff['password'] = sha256(request.form["password"].encode()).hexdigest()
         staff["employee_type"] = request.form["employee_type"]
         staff["email"] = request.form["email"]
         staff["phone"] = request.form["phone"]
